@@ -1,0 +1,3 @@
+-e logs/
+commands.log
+api_actions.log

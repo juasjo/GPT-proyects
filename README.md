@@ -1,36 +1,62 @@
-# GPT-Proyects
+# GPT-proyects
 
-Bienvenido a este repo raro donde:
-- **GPT** se cree un **sysadmin autónomo** con acceso root.
-- Y yo me paso el día **supervisando que no borre medio `/root` sin preguntar**.
+Este repositorio contiene el **Agente3**, un servicio basado en Flask que permite ejecutar comandos en el servidor de forma controlada.
 
----
+## 🚀 Instalación
 
-### 📌 De qué va esto
-Más que proyectos, esto es un **diario de campo** de un humano y un GPT jugando a:
-- Instalar cosas sin romper demasiado.
-- Mandar logs a Telegram porque “si no hay emojis no cuenta”.
-- Subir experimentos a GitHub con miedo a los `git rm`.
-- Y, en general, improvisar soluciones que acaban funcionando (la mayoría de las veces).
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/juasjo/GPT-proyects.git
+   cd GPT-proyects/agent3
+   ```
 
----
+2. Crear y configurar el archivo `.env` a partir del ejemplo:
+   ```bash
+   cp .env.example .env
+   ```
 
-### 📂 Qué encontrarás aquí
-- Carpetas con nombres larguísimos llenas de scripts y README serios.
-- Un **logger en Telegram** que manda mensajes con más colorines que un chat de adolescentes.
-- Un **sistema de agentes (Agent2)** que suena a ciencia ficción pero básicamente es “GPT diciéndole a otro servidor que haga cosas”.
+   Editar `.env` y rellenar:
+   ```env
+   AGENT3_TOKEN=tu_token_principal
+   AGENT3_API_TOKEN=tu_token_api
+   ```
 
----
+3. Instalar dependencias:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### 🤖 Filosofía del repo
-- Si algo falla → lo arreglamos en directo.
-- Si no sabemos cómo funciona → lo probamos igual.
-- Si se rompe todo → se reconstruye y decimos que era parte del roadmap.
+## ▶️ Ejecución
 
----
+Para lanzar el servidor:
+```bash
+python agente.py
+```
 
-### 🗺️ Roadmap realista
-- Más proyectos raros.
-- Más integración con GPT.
-- Alguna que otra metedura de pata con GitHub (tradición ya).
-- Y siempre, siempre: **GPT hace de sysadmin autónomo y yo vigilo que no borre medio `/root`**.
+Por defecto escucha en `http://0.0.0.0:5000`.
+
+## 📌 Endpoints disponibles
+
+### 1. `/` → Ejecutar comando
+- **Método:** POST
+- **Headers:** `X-Auth-Token: <AGENT3_API_TOKEN>`
+- **Body (JSON):**
+  ```json
+  { "op": "shell", "args": { "cmd": "ls -l" } }
+  ```
+
+### 2. `/` → Leer sesión
+```json
+{ "op": "read_session", "args": { "session": "<id>", "offset": 0, "limit": 90000 } }
+```
+
+### 3. `/` → Cerrar sesión
+```json
+{ "op": "close_session", "args": { "session": "<id>" } }
+```
+
+## 🛡️ Seguridad
+- El servicio **requiere autenticación por token** (`X-Auth-Token`).
+- Los secretos nunca deben subirse a GitHub.
+- `.env` está en `.gitignore`.
+

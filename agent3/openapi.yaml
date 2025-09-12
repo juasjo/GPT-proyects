@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: Agent3 API
+  description: API para ejecutar comandos remotos de manera segura en un servidor Linux.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+
+paths:
+  /:
+    post:
+      summary: Ejecutar operación en Agent3
+      description: |
+        Endpoint principal que admite tres operaciones:
+        - **shell** → ejecutar un comando.
+        - **read_session** → leer resultados de una sesión.
+        - **close_session** → cerrar una sesión y eliminar sus datos.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                op:
+                  type: string
+                  enum: [shell, read_session, close_session]
+                  description: Operación a ejecutar.
+                args:
+                  type: object
+                  description: Argumentos de la operación.
+            examples:
+              shell:
+                value:
+                  op: shell
+                  args:
+                    cmd: "ls -l /"
+              read_session:
+                value:
+                  op: read_session
+                  args:
+                    session: "abc123"
+                    offset: 0
+                    limit: 90000
+              close_session:
+                value:
+                  op: close_session
+                  args:
+                    session: "abc123"
+      responses:
+        '200':
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stdout:
+                    type: string
+                  stderr:
+                    type: string
+                  exit_code:
+                    type: integer
+                  session:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+        '403':
+          description: Token inválido o no autorizado.
+
+components:
+  securitySchemes:
+    TokenAuth:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+
+security:
+  - TokenAuth: []
